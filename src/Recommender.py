@@ -15,7 +15,8 @@ class Recommender:
   def __init__(self, documents_filename, stop_words_filename, corpus_filename):
     self.frequencies = self.load_data(documents_filename, stop_words_filename, corpus_filename)
   
-  
+
+
   def load_data(self, documents_filename, stop_words_filename, corpus_filename):
     list_term_count = []
     stop_word_list = []
@@ -27,7 +28,6 @@ class Recommender:
     # Guardamos los elementos de lematización
     with open(corpus_filename, "r") as corpus_file_system:
       corpus_list = json.load(corpus_file_system)
-    
     
     with open(documents_filename, "r") as document_file_system:
       for line in document_file_system.readlines():
@@ -52,6 +52,8 @@ class Recommender:
     return list_term_count
   
   
+  
+  
   def calculate_df(self):
     self.df = dict()
     for dictionary in self.frequencies:
@@ -69,6 +71,8 @@ class Recommender:
     return self.df
 
 
+
+
   def calculate_tf(self):
     self.tf = []
     for dictionary in self.frequencies:
@@ -80,13 +84,47 @@ class Recommender:
           aux[element] = 1 + math.log10(dictionary[element])
       self.tf.append(aux)
     return self.tf
-    
+
+
+
+
   def calculate_idf(self):
     self.idf = dict()
     for element in self.df:
       self.idf[element] = math.log10(len(self.frequencies)/self.df[element])
     return self.idf
-    
+  
+  
+  
+
+  def calculate_length_vector(self):
+    self.length_vector = []
+    for dictionary in self.tf:
+      aux = 0
+      for element in dictionary:
+        aux += dictionary[element]**2
+      self.length_vector.append(math.sqrt(aux))
+    return self.length_vector
+
+
+
+
+  def calculate_tf_idf(self):
+    self.tf_idf = []
+    for dictionary in self.tf:
+      aux = dict()
+      for element in dictionary:
+        if dictionary[element] > 0:
+          aux[element] = 1 + math.log10(dictionary[element])
+        else:
+          aux[element] = 0
+      self.tf_idf.append(aux)
+    return self.tf_idf
+  
+  
+  
+  
+  
   def plot_count_table(self):
     app = QApplication([])
     win = QWidget()
@@ -130,19 +168,21 @@ class Recommender:
     win.show()
     app.exec_()
 
-  def __str__(self):
-    result = '\n'
-    for element in self.df:
-      result += f'{element:<15}'
-    
-    result += '\n'
 
-    for i in range(len(self.frequencies)):
-      # result += f'\nFor line {i}'
-      for word in self.frequencies[i]:
-        result += f'{self.frequencies[i][word]:<5}'
+
+  # def __str__(self):
+  #   result = '\n'
+  #   for element in self.df:
+  #     result += f'{element:<15}'
+    
+  #   result += '\n'
+
+  #   for i in range(len(self.frequencies)):
+  #     # result += f'\nFor line {i}'
+  #     for word in self.frequencies[i]:
+  #       result += f'{self.frequencies[i][word]:<5}'
       
-    # result += '\nDF\n'
-    # for word in self.df:
-    #   result += f"\n    {word:<15} --> {self.df[word]:<6}"
-    return result
+  #   # result += '\nDF\n'
+  #   # for word in self.df:
+  #   #   result += f"\n    {word:<15} --> {self.df[word]:<6}"
+  #   return result

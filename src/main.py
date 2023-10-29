@@ -30,9 +30,12 @@ recommender.calculate_tf()
 
 recommender.calculate_idf()
 
-# print(recommender.df)
-for i in recommender.df:
-  print(i)
-  print("\n\n")
+recommender.calculate_length_vector()
 
-recommender.plot_count_table()
+recommender.calculate_tf_idf()
+
+
+# print(recommender.df)
+print(recommender.df)
+
+# recommender.plot_count_table()
