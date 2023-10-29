@@ -27,4 +27,4 @@ recommender = Recommender(documents_filename, stop_words_filename, corpus_filena
 recommender.calculate_df()
 # print(recommender.df["aromas"])
 
-print(recommender)
+recommender.plot_count_table()

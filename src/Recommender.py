@@ -1,6 +1,10 @@
 import string
 import re
 import json
+import pandas as pd
+from PyQt5.QtWidgets import QApplication, QWidget,QScrollArea, QTableWidget, QVBoxLayout,QTableWidgetItem
+# Ojito esta es curiosa
+# from pandasgui import show
 
 
 class Recommender:
@@ -60,8 +64,35 @@ class Recommender:
           continue
         else:
           self.frequencies[i][word] = 0 
-      
+    
+  def plot_count_table(self):
+    app = QApplication([])
+    win = QWidget()
+    scroll = QScrollArea()
+    layout = QVBoxLayout()
+    table = QTableWidget()
+    scroll.setWidget(table)
+    layout.addWidget(table)
+    win.setLayout(layout) 
+    win.resize(800, 600)  # Establece el tamaño inicial de la ventana a 800x600 píxeles
+    data = {  key: [] for key in self.df}
+    for key in data:
+      for diccionario in self.frequencies:
+        value = diccionario.get(key)  # Obtenemos el valor de la clave "key"
+        data[key].append(value)
+    
+    df = pd.DataFrame(data)
+  
+    table.setColumnCount(len(df.columns))
+    table.setRowCount(len(df.index))
+    table.setHorizontalHeaderLabels(df.columns)  # Establece los nombres de las columnas
 
+    for i in range(len(df.index)):
+        for j in range(len(df.columns)):
+            table.setItem(i,j,QTableWidgetItem(str(df.iloc[i, j])))
+
+    win.show()
+    app.exec_()
 
   def __str__(self):
     result = '\n'
