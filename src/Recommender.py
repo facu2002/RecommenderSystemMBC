@@ -1,8 +1,11 @@
 import string
 import re
 import json
+import math
 import pandas as pd
 from PyQt5.QtWidgets import QApplication, QWidget,QScrollArea, QTableWidget, QVBoxLayout,QTableWidgetItem
+from PyQt5.QtGui import QColor
+
 # Ojito esta es curiosa
 # from pandasgui import show
 
@@ -24,7 +27,6 @@ class Recommender:
     # Guardamos los elementos de lematización
     with open(corpus_filename, "r") as corpus_file_system:
       corpus_list = json.load(corpus_file_system)
-      print(type(corpus_list))
     
     
     with open(documents_filename, "r") as document_file_system:
@@ -64,6 +66,26 @@ class Recommender:
           continue
         else:
           self.frequencies[i][word] = 0 
+    return self.df
+
+
+  def calculate_tf(self):
+    self.tf = []
+    for dictionary in self.frequencies:
+      aux = dict()
+      for element in dictionary:
+        if dictionary[element] == 0:
+          aux[element] = 0
+        else:
+          aux[element] = 1 + math.log10(dictionary[element])
+      self.tf.append(aux)
+    return self.tf
+    
+  def calculate_idf(self):
+    self.idf = dict()
+    for element in self.df:
+      self.idf[element] = math.log10(len(self.frequencies)/self.df[element])
+    return self.idf
     
   def plot_count_table(self):
     app = QApplication([])
@@ -76,19 +98,35 @@ class Recommender:
     win.setLayout(layout) 
     win.resize(800, 600)  # Establece el tamaño inicial de la ventana a 800x600 píxeles
     data = {  key: [] for key in self.df}
+    aux = []
     for key in data:
       for diccionario in self.frequencies:
         value = diccionario.get(key)  # Obtenemos el valor de la clave "key"
         data[key].append(value)
+      data[key].append(self.df[key])
+        
     
-    df = pd.DataFrame(data)
+    # data["DF_RESULT"] = [self.df[key] for key in self.df]
+        
+    
+    data_frame = pd.DataFrame(data)
   
-    table.setColumnCount(len(df.columns))
-    table.setRowCount(len(df.index))
-    table.setHorizontalHeaderLabels(df.columns)  # Establece los nombres de las columnas
-    for i in range(len(df.index)):
-        for j in range(len(df.columns)):
-            table.setItem(i,j,QTableWidgetItem(str(df.iloc[i, j])))
+    table.setColumnCount(len(data_frame.columns))
+    table.setRowCount(len(data_frame.index))
+    # permitimos que la tabla se estire para llenar el espacio disponible
+    table.horizontalHeader().setStretchLastSection(True)
+    table.verticalHeader().setStretchLastSection(True)
+    table.setHorizontalHeaderLabels(data_frame.columns)  # Establece los nombres de las columnas
+    table.setVerticalHeaderLabels([ f"Article {i}" for i in range(len(data_frame.index)-1)] + ["DF"])  # Establece los nombres de las columnas
+    table.horizontalHeader().setStyleSheet("QHeaderView::section {background-color:rgb( 53, 180, 19)}")  # Establece el color de fondo de las cabeceras de las columnas
+    
+    for i in range(len(data_frame.index)):
+      for j in range(len(data_frame.columns)):
+        item = QTableWidgetItem(str(data_frame.iloc[i, j]))
+        if i % 2 == 0:
+          item.setBackground(QColor(166, 255, 142))  # Fondo azul claro para filas pares
+
+        table.setItem(i, j, item)
     win.show()
     app.exec_()
 

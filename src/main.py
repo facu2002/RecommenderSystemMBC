@@ -25,6 +25,14 @@ recommender = Recommender(documents_filename, stop_words_filename, corpus_filena
 #     print("   Veamos que", element, recommender.frequencies[i][element] )
 
 recommender.calculate_df()
-# print(recommender.df["aromas"])
+
+recommender.calculate_tf()
+
+recommender.calculate_idf()
+
+# print(recommender.df)
+for i in recommender.df:
+  print(i)
+  print("\n\n")
 
 recommender.plot_count_table()
