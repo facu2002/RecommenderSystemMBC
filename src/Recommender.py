@@ -19,19 +19,19 @@ class Recommender:
         Returns the created instance of the Recommender class.
     """
     self.frequencies = self.load_data(documents_filename, stop_words_filename, corpus_filename)
-  
+
 
 
   def load_data(self, documents_filename, stop_words_filename, corpus_filename):
     """
-    
+    Function that loads the data from the files and creates the strcutures needed for the recommender.
     Args:
-        documents_filename (_type_): _description_
-        stop_words_filename (_type_): _description_
-        corpus_filename (_type_): _description_
+        documents_filename: name of the file that contains the documents.
+        stop_words_filename: name of the file that contains the stop words.
+        corpus_filename: name of the file that contains the corpus (for the lemmatization).
 
     Returns:
-        _type_: _description_
+        Returns a list of dictionaries, where each dictionary contains the frequency of the words in a document.
     """
     list_term_count = []
     stop_word_list = []
@@ -65,11 +65,17 @@ class Recommender:
             document[element] = 1
         list_term_count.append(document)
     return list_term_count
-  
-  
-  
-  
+
+
+
   def calculate_df(self):
+    """
+    Function that calculates the document frequency of the words in the documents.
+    Args:
+        self: argument that refers to the created instance of the class.
+    Returns:
+        Returns a dictionary with the document frequency of the words in the documents.
+    """
     self.df = dict()
     for dictionary in self.frequencies:
       for element in dictionary:
@@ -87,8 +93,14 @@ class Recommender:
 
 
 
-
   def calculate_tf(self):
+    """
+    Function that calculates the term frequency of the words in the documents.
+    Args:
+        self: argument that refers to the created instance of the class.
+    Returns:
+        Dictionary with the term frequency of the words in the documents.
+    """
     self.tf = []
     for dictionary in self.frequencies:
       aux = dict()
@@ -102,17 +114,29 @@ class Recommender:
 
 
 
-
   def calculate_idf(self):
+    """
+    Function that calculates the inverse document frequency of the words in the documents.
+    Args:
+        self: argument that refers to the created instance of the class.
+    Returns:
+        Dictionary with the inverse document frequency of the words in the documents.
+    """
     self.idf = dict()
     for element in self.df:
       self.idf[element] = math.log10(len(self.frequencies)/self.df[element])
     return self.idf
-  
-  
+
   
 
   def calculate_length_vector(self):
+    """
+    Function that calculates the length of the vectors of the documents.
+    Args:
+        self: argument that refers to the created instance of the class.
+    Returns:
+        List with the length of the vectors of the documents.
+    """
     self.length_vector = []
     for dictionary in self.tf:
       aux = 0
@@ -124,6 +148,13 @@ class Recommender:
 
 
   def calculate_tf_idf(self):
+    """
+    Function that calculates the tf_idf of the words in the documents.
+    Args:
+        self: argument that refers to the created instance of the class.
+    Returns:
+        Dictionary with the tf_idf of the words in the documents.
+    """
     self.tf_idf = []
     i = 0
     for dictionary in self.tf:
@@ -139,85 +170,37 @@ class Recommender:
 
 
 
-
-  def calculate_cosine(self, dict1, dict2):   
+  def calculate_cosine(self, dict1, dict2):
+    """
+    Function that calculates the cosine of two vectors (documents).
+    Args:
+        self: argument that refers to the created instance of the class.
+        dict1: list of the values of the normalized vector of the first document.
+        dict2: list of the values of the normalized vector of the second document.
+    Returns:
+        Value of the cosine of the two vectors.
+    """  
     result = 0
     if len(dict1) == len(dict2):
       for i in dict1:
         result += dict1[i] * dict2[i]
       return result
     return -1
-  
-  
-  
+
+
+
   def calculate_similarity(self, document):
+    """
+    Function that calculates the similarity of a document with the rest of the documents.
+    Args:
+        self: argument that refers to the created instance of the class.
+        document: number of the document to calculate the similarity with the rest of the documents.
+    Returns:
+        List with the similarity of the document with the rest of the documents.
+    """
     result = []
     for i in range(len(self.tf_idf)):
       if(document != i):
         result.append(self.calculate_cosine(self.tf_idf[document], self.tf_idf[i]))
       
     return result 
-        
-  
-  
-  # def plot_count_table(self):
-  #   app = QApplication([])
-  #   win = QWidget()
-  #   scroll = QScrollArea()
-  #   layout = QVBoxLayout()
-  #   table = QTableWidget()
-  #   scroll.setWidget(table)
-  #   layout.addWidget(table)
-  #   win.setLayout(layout) 
-  #   win.resize(800, 600)  # Establece el tamaño inicial de la ventana a 800x600 píxeles
-  #   data = {  key: [] for key in self.df}
-  #   aux = []
-  #   for key in data:
-  #     for diccionario in self.frequencies:
-  #       value = diccionario.get(key)  # Obtenemos el valor de la clave "key"
-  #       data[key].append(value)
-  #     data[key].append(self.df[key])
-        
-    
-  #   # data["DF_RESULT"] = [self.df[key] for key in self.df]
-        
-    
-  #   data_frame = pd.DataFrame(data)
-  
-  #   table.setColumnCount(len(data_frame.columns))
-  #   table.setRowCount(len(data_frame.index))
-  #   # permitimos que la tabla se estire para llenar el espacio disponible
-  #   table.horizontalHeader().setStretchLastSection(True)
-  #   table.verticalHeader().setStretchLastSection(True)
-  #   table.setHorizontalHeaderLabels(data_frame.columns)  # Establece los nombres de las columnas
-  #   table.setVerticalHeaderLabels([ f"Article {i}" for i in range(len(data_frame.index)-1)] + ["DF"])  # Establece los nombres de las columnas
-  #   table.horizontalHeader().setStyleSheet("QHeaderView::section {background-color:rgb( 53, 180, 19)}")  # Establece el color de fondo de las cabeceras de las columnas
-    
-  #   for i in range(len(data_frame.index)):
-  #     for j in range(len(data_frame.columns)):
-  #       item = QTableWidgetItem(str(data_frame.iloc[i, j]))
-  #       if i % 2 == 0:
-  #         item.setBackground(QColor(166, 255, 142))  # Fondo azul claro para filas pares
-
-  #       table.setItem(i, j, item)
-  #   win.show()
-  #   app.exec_()
-
-
-
-  # def __str__(self):
-  #   result = '\n'
-  #   for element in self.df:
-  #     result += f'{element:<15}'
-    
-  #   result += '\n'
-
-  #   for i in range(len(self.frequencies)):
-  #     # result += f'\nFor line {i}'
-  #     for word in self.frequencies[i]:
-  #       result += f'{self.frequencies[i][word]:<5}'
-      
-  #   # result += '\nDF\n'
-  #   # for word in self.df:
-  #   #   result += f"\n    {word:<15} --> {self.df[word]:<6}"
-  #   return result

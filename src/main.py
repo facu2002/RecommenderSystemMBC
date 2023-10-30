@@ -1,5 +1,5 @@
 from Recommender import Recommender
-from tablas import TablasApp
+from tables import TablasApp
 from PyQt5.QtWidgets import QApplication
 import sys
 
@@ -22,20 +22,19 @@ documents_filename = f"./data/documents/documents-01.txt"
 
 
 recommender = Recommender(documents_filename, stop_words_filename, corpus_filename)
-# for i in range(len(recommender.frequencies)):
-#   print("La linea ", i)
-#   for element in recommender.frequencies[i]:
-#     print("   Veamos que", element, recommender.frequencies[i][element] )
 
 recommender.calculate_df()
+
 recommender.calculate_tf()
+
 recommender.calculate_idf()
+
 recommender.calculate_length_vector()
+
 recommender.calculate_tf_idf()
 
-# recommender.plot_count_table()
-
-
 app = QApplication(sys.argv)
+
 ventana = TablasApp(recommender)
+
 sys.exit(app.exec_())

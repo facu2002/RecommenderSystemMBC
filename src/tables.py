@@ -20,15 +20,15 @@ class TablasApp(QWidget):
       table = self.create_table(article, index, recommender)
       label = self.create_similarity(index, recommender)
       # Crear un widget contenedor
+      hbox = QHBoxLayout(self)
       widget_contenedor = QWidget()
 
-      # Crear un diseño vertical para el widget contenedor
-      layout = QHBoxLayout()
-      layout.addWidget(table)
-      layout.addWidget(label)
+      # Establecer los stretch factors para definir la relación de tamaño
+      hbox.addWidget(table, 3)  # La tabla ocupará 2/3 del espacio
+      hbox.addWidget(label, 1)  # El label ocupará 1/3 del espacio
 
       # Establecer el diseño del widget contenedor
-      widget_contenedor.setLayout(layout)
+      widget_contenedor.setLayout(hbox)
       tab_widget.addTab(widget_contenedor, f"Document {index}")
         
 
@@ -77,7 +77,7 @@ class TablasApp(QWidget):
     # se establece el tamaño de las filas
     table.verticalHeader().setDefaultSectionSize(20)
     # se establece el tamaño de las columnas
-    table.horizontalHeader().setDefaultSectionSize(200)
+    table.horizontalHeader().setDefaultSectionSize(180)
     table.setStyleSheet(
       
       """
@@ -130,11 +130,11 @@ class TablasApp(QWidget):
     
     similarities = recommender.calculate_similarity(num_article)
     table = QTableWidget(self)
-    table.setColumnWidth(0, 100)
-    table.setColumnWidth(1, 200)
     table.setColumnCount(2)
     table.setRowCount(len(similarities))
     table.setHorizontalHeaderLabels(["Documents", "Similarity"])
+    table.setColumnWidth(0, 100)
+    table.setColumnWidth(1, 200)
     index = 0
     for i, similarity in enumerate(similarities):
       if index == num_article:
