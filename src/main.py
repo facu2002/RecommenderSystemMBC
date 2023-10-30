@@ -1,4 +1,7 @@
 from Recommender import Recommender
+from tablas import TablasApp
+from PyQt5.QtWidgets import QApplication
+import sys
 
 
 #el usuario debe introducir el idioma del documento entonces nosotros elegimos entre
@@ -25,15 +28,14 @@ recommender = Recommender(documents_filename, stop_words_filename, corpus_filena
 #     print("   Veamos que", element, recommender.frequencies[i][element] )
 
 recommender.calculate_df()
-
 recommender.calculate_tf()
 recommender.calculate_idf()
-print(recommender.idf)
 recommender.calculate_length_vector()
 recommender.calculate_tf_idf()
 
-
-# print(recommender.df)
-# print(recommender.tf)   
-
 # recommender.plot_count_table()
+
+
+app = QApplication(sys.argv)
+ventana = TablasApp(recommender)
+sys.exit(app.exec_())

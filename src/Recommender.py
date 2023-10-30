@@ -1,23 +1,38 @@
-import string
 import re
 import json
 import math
-import pandas as pd
-from PyQt5.QtWidgets import QApplication, QWidget,QScrollArea, QTableWidget, QVBoxLayout,QTableWidgetItem
-from PyQt5.QtGui import QColor
 
-# Ojito esta es curiosa
-# from pandasgui import show
 
 
 class Recommender:
-  punctuation = ',.!?;:"()[]{}'
+
+
   def __init__(self, documents_filename, stop_words_filename, corpus_filename):
+    """
+    Constructor of the Recommender class, responsible for creating instances of the class
+    Args:
+        self: argument that refers to the created instance of the class.
+        documents_filename: name of the file that contains the documents.
+        stop_words_filename: name of the file that contains the stop words.
+        corpus_filename: name of the file that contains the corpus (for the lemmatization).
+    Returns:
+        Returns the created instance of the Recommender class.
+    """
     self.frequencies = self.load_data(documents_filename, stop_words_filename, corpus_filename)
   
 
 
   def load_data(self, documents_filename, stop_words_filename, corpus_filename):
+    """
+    
+    Args:
+        documents_filename (_type_): _description_
+        stop_words_filename (_type_): _description_
+        corpus_filename (_type_): _description_
+
+    Returns:
+        _type_: _description_
+    """
     list_term_count = []
     stop_word_list = []
     
@@ -110,62 +125,83 @@ class Recommender:
 
   def calculate_tf_idf(self):
     self.tf_idf = []
+    i = 0
     for dictionary in self.tf:
       aux = dict()
       for element in dictionary:
         if dictionary[element] > 0:
-          aux[element] = 1 + math.log10(dictionary[element])
+          aux[element] = dictionary[element] / self.length_vector[i]
         else:
           aux[element] = 0
       self.tf_idf.append(aux)
+      i += 1
     return self.tf_idf
-  
-  
-  
-  
-  
-  def plot_count_table(self):
-    app = QApplication([])
-    win = QWidget()
-    scroll = QScrollArea()
-    layout = QVBoxLayout()
-    table = QTableWidget()
-    scroll.setWidget(table)
-    layout.addWidget(table)
-    win.setLayout(layout) 
-    win.resize(800, 600)  # Establece el tamaño inicial de la ventana a 800x600 píxeles
-    data = {  key: [] for key in self.df}
-    aux = []
-    for key in data:
-      for diccionario in self.frequencies:
-        value = diccionario.get(key)  # Obtenemos el valor de la clave "key"
-        data[key].append(value)
-      data[key].append(self.df[key])
-        
-    
-    # data["DF_RESULT"] = [self.df[key] for key in self.df]
-        
-    
-    data_frame = pd.DataFrame(data)
-  
-    table.setColumnCount(len(data_frame.columns))
-    table.setRowCount(len(data_frame.index))
-    # permitimos que la tabla se estire para llenar el espacio disponible
-    table.horizontalHeader().setStretchLastSection(True)
-    table.verticalHeader().setStretchLastSection(True)
-    table.setHorizontalHeaderLabels(data_frame.columns)  # Establece los nombres de las columnas
-    table.setVerticalHeaderLabels([ f"Article {i}" for i in range(len(data_frame.index)-1)] + ["DF"])  # Establece los nombres de las columnas
-    table.horizontalHeader().setStyleSheet("QHeaderView::section {background-color:rgb( 53, 180, 19)}")  # Establece el color de fondo de las cabeceras de las columnas
-    
-    for i in range(len(data_frame.index)):
-      for j in range(len(data_frame.columns)):
-        item = QTableWidgetItem(str(data_frame.iloc[i, j]))
-        if i % 2 == 0:
-          item.setBackground(QColor(166, 255, 142))  # Fondo azul claro para filas pares
 
-        table.setItem(i, j, item)
-    win.show()
-    app.exec_()
+
+
+
+  def calculate_cosine(self, dict1, dict2):   
+    result = 0
+    if len(dict1) == len(dict2):
+      for i in dict1:
+        result += dict1[i] * dict2[i]
+      return result
+    return -1
+  
+  
+  
+  def calculate_similarity(self, document):
+    result = []
+    for i in range(len(self.tf_idf)):
+      if(document != i):
+        result.append(self.calculate_cosine(self.tf_idf[document], self.tf_idf[i]))
+      
+    return result 
+        
+  
+  
+  # def plot_count_table(self):
+  #   app = QApplication([])
+  #   win = QWidget()
+  #   scroll = QScrollArea()
+  #   layout = QVBoxLayout()
+  #   table = QTableWidget()
+  #   scroll.setWidget(table)
+  #   layout.addWidget(table)
+  #   win.setLayout(layout) 
+  #   win.resize(800, 600)  # Establece el tamaño inicial de la ventana a 800x600 píxeles
+  #   data = {  key: [] for key in self.df}
+  #   aux = []
+  #   for key in data:
+  #     for diccionario in self.frequencies:
+  #       value = diccionario.get(key)  # Obtenemos el valor de la clave "key"
+  #       data[key].append(value)
+  #     data[key].append(self.df[key])
+        
+    
+  #   # data["DF_RESULT"] = [self.df[key] for key in self.df]
+        
+    
+  #   data_frame = pd.DataFrame(data)
+  
+  #   table.setColumnCount(len(data_frame.columns))
+  #   table.setRowCount(len(data_frame.index))
+  #   # permitimos que la tabla se estire para llenar el espacio disponible
+  #   table.horizontalHeader().setStretchLastSection(True)
+  #   table.verticalHeader().setStretchLastSection(True)
+  #   table.setHorizontalHeaderLabels(data_frame.columns)  # Establece los nombres de las columnas
+  #   table.setVerticalHeaderLabels([ f"Article {i}" for i in range(len(data_frame.index)-1)] + ["DF"])  # Establece los nombres de las columnas
+  #   table.horizontalHeader().setStyleSheet("QHeaderView::section {background-color:rgb( 53, 180, 19)}")  # Establece el color de fondo de las cabeceras de las columnas
+    
+  #   for i in range(len(data_frame.index)):
+  #     for j in range(len(data_frame.columns)):
+  #       item = QTableWidgetItem(str(data_frame.iloc[i, j]))
+  #       if i % 2 == 0:
+  #         item.setBackground(QColor(166, 255, 142))  # Fondo azul claro para filas pares
+
+  #       table.setItem(i, j, item)
+  #   win.show()
+  #   app.exec_()
 
 
 
