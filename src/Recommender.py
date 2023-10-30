@@ -108,7 +108,6 @@ class Recommender:
 
 
 
-
   def calculate_tf_idf(self):
     self.tf_idf = []
     for dictionary in self.tf:

@@ -27,15 +27,13 @@ recommender = Recommender(documents_filename, stop_words_filename, corpus_filena
 recommender.calculate_df()
 
 recommender.calculate_tf()
-
 recommender.calculate_idf()
-
+print(recommender.idf)
 recommender.calculate_length_vector()
-
 recommender.calculate_tf_idf()
 
 
 # print(recommender.df)
-print(recommender.df)
+# print(recommender.tf)   
 
 # recommender.plot_count_table()
