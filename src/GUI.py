@@ -40,27 +40,27 @@ class GUI(QWidget):
     layout = QVBoxLayout(self)
     
     
-    # poner el boton de cerrar arriba a la derecha
-    close_button = QPushButton("", self)
-    icon = QIcon("src/close.svg")
+    # # poner el boton de cerrar arriba a la derecha
+    # close_button = QPushButton("", self)
+    # icon = QIcon("src/close.svg")
     
-    close_button.setIcon(icon)
-    close_button.setIconSize(QSize(20, 20))
-    close_button.setFixedSize(QSize(30, 30))
-    close_button.setStyleSheet("QPushButton { background-color: #ffffff; border: none; } QPushButton:hover { background-color: #ff0000; }")
-    close_button.clicked.connect(self.close)
-    layout.addWidget(close_button, alignment=Qt.AlignRight)
+    # close_button.setIcon(icon)
+    # close_button.setIconSize(QSize(20, 20))
+    # close_button.setFixedSize(QSize(30, 30))
+    # close_button.setStyleSheet("QPushButton { background-color: #ffffff; border: none; } QPushButton:hover { background-color: #ff0000; }")
+    # close_button.clicked.connect(self.close)
+    # layout.addWidget(close_button, alignment=Qt.AlignRight)
     layout.addWidget(tab_widget)
 
     self.setLayout(layout)
 
     self.setWindowTitle('Recommender Content-Based Models')
-    self.showFullScreen()
+    # self.showFullScreen()
     
     
     
-    button = QPushButton("Cerrar Ventana", self)
-    button.clicked.connect(self.close)
+    # button = QPushButton("Cerrar Ventana", self)
+    # button.clicked.connect(self.close)
     
     # Establecer el icono de la aplicación
     self.setWindowIcon(QIcon('src/icon.svg'))
