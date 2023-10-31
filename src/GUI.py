@@ -1,14 +1,17 @@
 import sys
 from PyQt5.QtCore import Qt, QSize
-from PyQt5.QtWidgets import QWidget, QTableWidget, QVBoxLayout, QTableWidgetItem, QTabWidget, QPushButton, QLabel, QHBoxLayout
-from PyQt5.QtGui import QIcon
+from PyQt5.QtWidgets import QHeaderView, QWidget, QTableWidget, QVBoxLayout, QTableWidgetItem, QTabWidget, QPushButton, QLabel, QHBoxLayout
+from PyQt5.QtGui import QIcon, QFont, QFontDatabase
+
 from Recommender import Recommender
 
 
-class TablasApp(QWidget):
+class GUI(QWidget):
   
   def __init__(self, recommender: Recommender):
     super().__init__()
+    
+   
     self.initUI(recommender)
   
   def initUI(self, recommender: Recommender):
@@ -70,6 +73,8 @@ class TablasApp(QWidget):
     table.setColumnCount(6)
     table.setRowCount(len(article))
     table.setHorizontalHeaderLabels(["Term", "Frequency", "DF", "TF", "IDF", "TF-IDF"])
+    header = table.horizontalHeader()
+    header.setSectionResizeMode(QHeaderView.Stretch)
     # setColumnWidth(index_column, size)
     table.setColumnWidth(3, 200)
     table.setColumnWidth(4, 200)
@@ -133,6 +138,8 @@ class TablasApp(QWidget):
     table.setColumnCount(2)
     table.setRowCount(len(similarities))
     table.setHorizontalHeaderLabels(["Documents", "Similarity"])
+    header = table.horizontalHeader()
+    header.setSectionResizeMode(QHeaderView.Stretch)
     table.setColumnWidth(0, 100)
     table.setColumnWidth(1, 200)
     index = 0

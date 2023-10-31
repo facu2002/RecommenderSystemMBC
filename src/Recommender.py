@@ -19,7 +19,11 @@ class Recommender:
         Returns the created instance of the Recommender class.
     """
     self.frequencies = self.load_data(documents_filename, stop_words_filename, corpus_filename)
-
+    self.calculate_df()
+    self.calculate_tf()
+    self.calculate_idf()
+    self.calculate_length_vector()
+    self.calculate_tf_idf()
 
 
   def load_data(self, documents_filename, stop_words_filename, corpus_filename):

@@ -1,5 +1,5 @@
 from Recommender import Recommender
-from tables import TablasApp
+from GUI import GUI
 from PyQt5.QtWidgets import QApplication
 import sys
 
@@ -17,24 +17,14 @@ corpus_filename = f"./data/corpus/corpus-en.txt"
 # corpus_filename = f"./data/corpus/corpus-es.txt"
 
 # el unico parametro que debe introducir el usuario es documents_filename
-documents_filename = f"./data/documents/documents-01.txt"
+documents_filename = f"./data/documents/documents-03.txt"
 
 
 
 recommender = Recommender(documents_filename, stop_words_filename, corpus_filename)
 
-recommender.calculate_df()
-
-recommender.calculate_tf()
-
-recommender.calculate_idf()
-
-recommender.calculate_length_vector()
-
-recommender.calculate_tf_idf()
-
 app = QApplication(sys.argv)
 
-ventana = TablasApp(recommender)
+ventana = GUI(recommender)
 
 sys.exit(app.exec_())
