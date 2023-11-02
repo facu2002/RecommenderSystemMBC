@@ -28,3 +28,4 @@ app = QApplication(sys.argv)
 ventana = GUI(recommender)
 
 sys.exit(app.exec_())
+
