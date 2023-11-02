@@ -29,6 +29,10 @@ class GUI(QWidget):
     """    
     # Crear el widget de pestañas
     tab_widget = QTabWidget(self)
+     # Cambia el tamaño del texto de los títulos de las pestañas
+    font = tab_widget.font()
+    font.setPointSize(16)  # Establece el tamaño de la fuente de los títulos
+    tab_widget.setFont(font)
     
     # Crear la primera tabla y agregar datos de ejemplo
     for index, article in enumerate(recommender.frequencies):
@@ -80,6 +84,10 @@ class GUI(QWidget):
     # setColumnWidth(index_column, size)
     table.setColumnWidth(3, 200)
     table.setColumnWidth(4, 200)
+    # Establecer el tamaño de fuente inicial de las celdas
+    font = QFont()
+    font.setPointSize(18)  # Tamaño de fuente inicial más grande
+    table.setFont(font)
     # se dimensiona las columnas para que se ajusten al tamaño de la ventana
     # se establece el tamaño de las filas
     table.verticalHeader().setDefaultSectionSize(20)
@@ -118,15 +126,15 @@ class GUI(QWidget):
       item.setTextAlignment(0x0004 | 0x0080)
       table.setItem(index, 2, item)
       # TF
-      item = QTableWidgetItem(str(recommender.tf[num_article][term]))
+      item = QTableWidgetItem("{:.10f}".format(recommender.tf[num_article][term]).rstrip('0').rstrip('.'))
       item.setTextAlignment(0x0004 | 0x0080)
       table.setItem(index, 3, item)
       # IDF
-      item = QTableWidgetItem(str(recommender.idf[term]))
+      item = QTableWidgetItem("{:.10f}".format(recommender.idf[term]).rstrip('0').rstrip('.'))
       item.setTextAlignment(0x0004 | 0x0080)
       table.setItem(index, 4, item)
       # TF-IDF
-      item = QTableWidgetItem(str(recommender.tf_idf[num_article][term]))
+      item = QTableWidgetItem("{:.10f}".format(recommender.tf_idf[num_article][term]).rstrip('0').rstrip('.'))
       item.setTextAlignment(0x0004 | 0x0080)
       table.setItem(index, 5, item)
     return table
@@ -152,6 +160,10 @@ class GUI(QWidget):
     header.setSectionResizeMode(QHeaderView.Stretch)
     table.setColumnWidth(0, 100)
     table.setColumnWidth(1, 200)
+    # Establecer el tamaño de fuente inicial de las celdas
+    font = QFont()
+    font.setPointSize(14)  # Tamaño de fuente inicial más grande
+    table.setFont(font)
     index = 0
     for i, similarity in enumerate(similarities):
       if index == num_article:
@@ -161,7 +173,7 @@ class GUI(QWidget):
       item.setTextAlignment(0x0004 | 0x0080)
       table.setItem(i, 0, item)
       # Similaridad
-      item = QTableWidgetItem(str(similarity))
+      item = QTableWidgetItem(f"{similarity:.10f}")
       item.setTextAlignment(0x0004 | 0x0080)
       table.setItem(i, 1, item)
       index += 1
