@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Recommender &mdash; Sistemas de recomendación : Modelos basado en el contenido  documentation</title>
+      <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js?v=b3ba4146"></script>
+        <script src="../_static/doctools.js?v=888ff710"></script>
+        <script src="../_static/sphinx_highlight.js?v=4825356b"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            Sistemas de recomendación : Modelos basado en el contenido
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../modules.html">src</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">Sistemas de recomendación : Modelos basado en el contenido</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="index.html">Module code</a></li>
+      <li class="breadcrumb-item active">Recommender</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for Recommender</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">re</span>
+<span class="kn">import</span> <span class="nn">json</span>
+<span class="kn">import</span> <span class="nn">math</span>
+
+
+
+<div class="viewcode-block" id="Recommender"><a class="viewcode-back" href="../Recommender.html#Recommender.Recommender">[docs]</a><span class="k">class</span> <span class="nc">Recommender</span><span class="p">:</span>
+
+
+  <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">documents_filename</span><span class="p">,</span> <span class="n">stop_words_filename</span><span class="p">,</span> <span class="n">corpus_filename</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Constructor of the Recommender class, responsible for creating instances of the class</span>
+<span class="sd">    Args:</span>
+<span class="sd">        self: argument that refers to the created instance of the class.</span>
+<span class="sd">        documents_filename: name of the file that contains the documents.</span>
+<span class="sd">        stop_words_filename: name of the file that contains the stop words.</span>
+<span class="sd">        corpus_filename: name of the file that contains the corpus (for the lemmatization).</span>
+<span class="sd">    Returns:</span>
+<span class="sd">        Returns the created instance of the Recommender class.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">frequencies</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">load_data</span><span class="p">(</span><span class="n">documents_filename</span><span class="p">,</span> <span class="n">stop_words_filename</span><span class="p">,</span> <span class="n">corpus_filename</span><span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">df</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">calculate_df</span><span class="p">()</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">tf</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">calculate_tf</span><span class="p">()</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">idf</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">calculate_idf</span><span class="p">()</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">length_vector</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">calculate_length_vector</span><span class="p">()</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">tf_idf</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">calculate_tf_idf</span><span class="p">()</span>
+    
+  <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="n">result</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+    <span class="n">result</span> <span class="o">+=</span> <span class="s2">&quot;Frequencies:</span><span class="se">\n</span><span class="s2">&quot;</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">frequencies</span><span class="p">:</span>
+      <span class="n">result</span> <span class="o">+=</span> <span class="nb">str</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span>
+    <span class="n">result</span> <span class="o">+=</span> <span class="s2">&quot;DF:</span><span class="se">\n</span><span class="s2">&quot;</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">df</span><span class="p">:</span>
+      <span class="n">result</span> <span class="o">+=</span> <span class="nb">str</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span>
+    <span class="n">result</span> <span class="o">+=</span> <span class="s2">&quot;TF:</span><span class="se">\n</span><span class="s2">&quot;</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">tf</span><span class="p">:</span>
+      <span class="n">result</span> <span class="o">+=</span> <span class="nb">str</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span>
+    <span class="n">result</span> <span class="o">+=</span> <span class="s2">&quot;IDF:</span><span class="se">\n</span><span class="s2">&quot;</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">idf</span><span class="p">:</span>
+      <span class="n">result</span> <span class="o">+=</span> <span class="nb">str</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span>
+    <span class="n">result</span> <span class="o">+=</span> <span class="s2">&quot;Length Vector:</span><span class="se">\n</span><span class="s2">&quot;</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">length_vector</span><span class="p">:</span>
+      <span class="n">result</span> <span class="o">+=</span> <span class="nb">str</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span>
+    <span class="n">result</span> <span class="o">+=</span> <span class="s2">&quot;TF-IDF:</span><span class="se">\n</span><span class="s2">&quot;</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">tf_idf</span><span class="p">:</span>
+      <span class="n">result</span> <span class="o">+=</span> <span class="nb">str</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span>
+    <span class="n">result</span> <span class="o">+=</span> <span class="s2">&quot;Similarity:</span><span class="se">\n</span><span class="s2">&quot;</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">tf_idf</span><span class="p">)):</span>
+      <span class="n">result</span> <span class="o">+=</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">calculate_similarity</span><span class="p">(</span><span class="n">i</span><span class="p">))</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span>
+    <span class="n">result</span> <span class="o">+=</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2"> REMEMBER: Use de GUI to see the data in a better way.</span><span class="se">\n</span><span class="s2">&quot;</span>
+    <span class="k">return</span> <span class="n">result</span>
+  
+      
+
+
+<div class="viewcode-block" id="Recommender.load_data"><a class="viewcode-back" href="../Recommender.html#Recommender.Recommender.load_data">[docs]</a>  <span class="k">def</span> <span class="nf">load_data</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">documents_filename</span><span class="p">,</span> <span class="n">stop_words_filename</span><span class="p">,</span> <span class="n">corpus_filename</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Function that loads the data from the files and creates the strcutures needed for the recommender.</span>
+<span class="sd">    Args:</span>
+<span class="sd">        documents_filename: name of the file that contains the documents.</span>
+<span class="sd">        stop_words_filename: name of the file that contains the stop words.</span>
+<span class="sd">        corpus_filename: name of the file that contains the corpus (for the lemmatization).</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        Returns a list of dictionaries, where each dictionary contains the frequency of the words in a document.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">list_term_count</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">stop_word_list</span> <span class="o">=</span> <span class="p">[]</span>
+    
+    <span class="c1"># Guardamos todas las stop_words</span>
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">stop_words_filename</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">stop_word_file_system</span><span class="p">:</span>
+      <span class="n">stop_word_list</span> <span class="o">=</span> <span class="p">[</span><span class="n">x</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">stop_word_file_system</span><span class="o">.</span><span class="n">readlines</span><span class="p">()]</span>
+    
+    <span class="c1"># Guardamos los elementos de lematización</span>
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">corpus_filename</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">corpus_file_system</span><span class="p">:</span>
+      <span class="n">corpus_list</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">corpus_file_system</span><span class="p">)</span>
+    
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">documents_filename</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">document_file_system</span><span class="p">:</span>
+      <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">document_file_system</span><span class="o">.</span><span class="n">readlines</span><span class="p">():</span>
+        <span class="c1"># Elimina los signos de puntuación</span>
+        <span class="n">line</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;[^\w\s</span><span class="se">\&#39;</span><span class="s1">]&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="n">line</span><span class="p">)</span>
+        <span class="c1"># Pasa todo a minúsculas</span>
+        <span class="n">line</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
+        <span class="n">document</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">element</span> <span class="ow">in</span> <span class="n">line</span><span class="o">.</span><span class="n">split</span><span class="p">():</span>
+          <span class="c1"># Elimina las palabras que se encuentren en stop_words</span>
+          <span class="k">if</span> <span class="n">element</span> <span class="ow">in</span> <span class="n">stop_word_list</span><span class="p">:</span>
+            <span class="k">continue</span>
+
+          <span class="c1"># Sacamos la frecuencia de las palabras</span>
+          <span class="k">if</span> <span class="n">element</span> <span class="ow">in</span> <span class="n">corpus_list</span><span class="p">:</span>
+            <span class="n">element</span> <span class="o">=</span> <span class="n">corpus_list</span><span class="p">[</span><span class="n">element</span><span class="p">]</span>
+          <span class="k">if</span> <span class="n">element</span> <span class="ow">in</span> <span class="n">document</span><span class="p">:</span>
+            <span class="n">document</span><span class="p">[</span><span class="n">element</span><span class="p">]</span> <span class="o">+=</span> <span class="mi">1</span>
+          <span class="k">else</span><span class="p">:</span>
+            <span class="n">document</span><span class="p">[</span><span class="n">element</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
+        <span class="n">list_term_count</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">document</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">list_term_count</span></div>
+
+
+
+<div class="viewcode-block" id="Recommender.calculate_df"><a class="viewcode-back" href="../Recommender.html#Recommender.Recommender.calculate_df">[docs]</a>  <span class="k">def</span> <span class="nf">calculate_df</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Function that calculates the document frequency of the words in the documents.</span>
+<span class="sd">    Args:</span>
+<span class="sd">        self: argument that refers to the created instance of the class.</span>
+<span class="sd">    Returns:</span>
+<span class="sd">        Returns a dictionary with the document frequency of the words in the documents.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">df</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+    <span class="k">for</span> <span class="n">dictionary</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">frequencies</span><span class="p">:</span>
+      <span class="k">for</span> <span class="n">element</span> <span class="ow">in</span> <span class="n">dictionary</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">element</span> <span class="ow">in</span> <span class="n">df</span><span class="p">:</span>
+          <span class="n">df</span><span class="p">[</span><span class="n">element</span><span class="p">]</span> <span class="o">+=</span> <span class="n">dictionary</span><span class="p">[</span><span class="n">element</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+          <span class="n">df</span><span class="p">[</span><span class="n">element</span><span class="p">]</span> <span class="o">=</span> <span class="n">dictionary</span><span class="p">[</span><span class="n">element</span><span class="p">]</span>
+    <span class="k">for</span> <span class="n">word</span> <span class="ow">in</span> <span class="n">df</span><span class="p">:</span>
+      <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">frequencies</span><span class="p">)):</span>
+        <span class="k">if</span> <span class="n">word</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">frequencies</span><span class="p">[</span><span class="n">i</span><span class="p">]:</span>
+          <span class="k">continue</span>
+        <span class="k">else</span><span class="p">:</span>
+          <span class="bp">self</span><span class="o">.</span><span class="n">frequencies</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">word</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span> 
+    <span class="k">return</span> <span class="n">df</span></div>
+
+
+
+<div class="viewcode-block" id="Recommender.calculate_tf"><a class="viewcode-back" href="../Recommender.html#Recommender.Recommender.calculate_tf">[docs]</a>  <span class="k">def</span> <span class="nf">calculate_tf</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Function that calculates the term frequency of the words in the documents.</span>
+<span class="sd">    Args:</span>
+<span class="sd">        self: argument that refers to the created instance of the class.</span>
+<span class="sd">    Returns:</span>
+<span class="sd">        Dictionary with the term frequency of the words in the documents.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">tf</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">dictionary</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">frequencies</span><span class="p">:</span>
+      <span class="n">aux</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+      <span class="k">for</span> <span class="n">element</span> <span class="ow">in</span> <span class="n">dictionary</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">dictionary</span><span class="p">[</span><span class="n">element</span><span class="p">]</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+          <span class="n">aux</span><span class="p">[</span><span class="n">element</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">else</span><span class="p">:</span>
+          <span class="n">aux</span><span class="p">[</span><span class="n">element</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">+</span> <span class="n">math</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="n">dictionary</span><span class="p">[</span><span class="n">element</span><span class="p">])</span>
+      <span class="n">tf</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">aux</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">tf</span></div>
+
+
+
+<div class="viewcode-block" id="Recommender.calculate_idf"><a class="viewcode-back" href="../Recommender.html#Recommender.Recommender.calculate_idf">[docs]</a>  <span class="k">def</span> <span class="nf">calculate_idf</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Function that calculates the inverse document frequency of the words in the documents.</span>
+<span class="sd">    Args:</span>
+<span class="sd">        self: argument that refers to the created instance of the class.</span>
+<span class="sd">    Returns:</span>
+<span class="sd">        Dictionary with the inverse document frequency of the words in the documents.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">idf</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+    <span class="k">for</span> <span class="n">element</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">df</span><span class="p">:</span>
+      <span class="n">idf</span><span class="p">[</span><span class="n">element</span><span class="p">]</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">frequencies</span><span class="p">)</span><span class="o">/</span><span class="bp">self</span><span class="o">.</span><span class="n">df</span><span class="p">[</span><span class="n">element</span><span class="p">])</span>
+    <span class="k">return</span> <span class="n">idf</span></div>
+
+  
+
+<div class="viewcode-block" id="Recommender.calculate_length_vector"><a class="viewcode-back" href="../Recommender.html#Recommender.Recommender.calculate_length_vector">[docs]</a>  <span class="k">def</span> <span class="nf">calculate_length_vector</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Function that calculates the length of the vectors of the documents.</span>
+<span class="sd">    Args:</span>
+<span class="sd">        self: argument that refers to the created instance of the class.</span>
+<span class="sd">    Returns:</span>
+<span class="sd">        List with the length of the vectors of the documents.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">length_vector</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">dictionary</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">tf</span><span class="p">:</span>
+      <span class="n">aux</span> <span class="o">=</span> <span class="mi">0</span>
+      <span class="k">for</span> <span class="n">element</span> <span class="ow">in</span> <span class="n">dictionary</span><span class="p">:</span>
+        <span class="n">aux</span> <span class="o">+=</span> <span class="n">dictionary</span><span class="p">[</span><span class="n">element</span><span class="p">]</span><span class="o">**</span><span class="mi">2</span>
+      <span class="n">length_vector</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">math</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">aux</span><span class="p">))</span>
+    <span class="k">return</span> <span class="n">length_vector</span></div>
+
+
+
+<div class="viewcode-block" id="Recommender.calculate_tf_idf"><a class="viewcode-back" href="../Recommender.html#Recommender.Recommender.calculate_tf_idf">[docs]</a>  <span class="k">def</span> <span class="nf">calculate_tf_idf</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Function that calculates the tf_idf of the words in the documents.</span>
+<span class="sd">    Args:</span>
+<span class="sd">        self: argument that refers to the created instance of the class.</span>
+<span class="sd">    Returns:</span>
+<span class="sd">        Dictionary with the tf_idf of the words in the documents.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">tf_idf</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="k">for</span> <span class="n">dictionary</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">tf</span><span class="p">:</span>
+      <span class="n">aux</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+      <span class="k">for</span> <span class="n">element</span> <span class="ow">in</span> <span class="n">dictionary</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">dictionary</span><span class="p">[</span><span class="n">element</span><span class="p">]</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+          <span class="n">aux</span><span class="p">[</span><span class="n">element</span><span class="p">]</span> <span class="o">=</span> <span class="n">dictionary</span><span class="p">[</span><span class="n">element</span><span class="p">]</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">length_vector</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+          <span class="n">aux</span><span class="p">[</span><span class="n">element</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
+      <span class="n">tf_idf</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">aux</span><span class="p">)</span>
+      <span class="n">i</span> <span class="o">+=</span> <span class="mi">1</span>
+    <span class="k">return</span> <span class="n">tf_idf</span></div>
+
+
+
+<div class="viewcode-block" id="Recommender.calculate_cosine"><a class="viewcode-back" href="../Recommender.html#Recommender.Recommender.calculate_cosine">[docs]</a>  <span class="k">def</span> <span class="nf">calculate_cosine</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dict1</span><span class="p">,</span> <span class="n">dict2</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Function that calculates the cosine of two vectors (documents).</span>
+<span class="sd">    Args:</span>
+<span class="sd">        self: argument that refers to the created instance of the class.</span>
+<span class="sd">        dict1: list of the values of the normalized vector of the first document.</span>
+<span class="sd">        dict2: list of the values of the normalized vector of the second document.</span>
+<span class="sd">    Returns:</span>
+<span class="sd">        Value of the cosine of the two vectors.</span>
+<span class="sd">    &quot;&quot;&quot;</span>  
+    <span class="n">result</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">dict1</span><span class="p">)</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="n">dict2</span><span class="p">):</span>
+      <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">dict1</span><span class="p">:</span>
+        <span class="n">result</span> <span class="o">+=</span> <span class="n">dict1</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">*</span> <span class="n">dict2</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+      <span class="k">return</span> <span class="n">result</span>
+    <span class="k">return</span> <span class="o">-</span><span class="mi">1</span></div>
+
+
+
+<div class="viewcode-block" id="Recommender.calculate_similarity"><a class="viewcode-back" href="../Recommender.html#Recommender.Recommender.calculate_similarity">[docs]</a>  <span class="k">def</span> <span class="nf">calculate_similarity</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">document</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Function that calculates the similarity of a document with the rest of the documents.</span>
+<span class="sd">    Args:</span>
+<span class="sd">        self: argument that refers to the created instance of the class.</span>
+<span class="sd">        document: number of the document to calculate the similarity with the rest of the documents.</span>
+<span class="sd">    Returns:</span>
+<span class="sd">        List with the similarity of the document with the rest of the documents.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">result</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">tf_idf</span><span class="p">)):</span>
+      <span class="k">if</span><span class="p">(</span><span class="n">document</span> <span class="o">!=</span> <span class="n">i</span><span class="p">):</span>
+        <span class="n">result</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">calculate_cosine</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">tf_idf</span><span class="p">[</span><span class="n">document</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">tf_idf</span><span class="p">[</span><span class="n">i</span><span class="p">]))</span>
+      
+    <span class="k">return</span> <span class="n">result</span> </div></div>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2023, Daniel Felipe &amp; Facundo José.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Recommender module &mdash; Sistemas de recomendación : Modelos basado en el contenido  documentation</title>
+      <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="_static/jquery.js?v=5d32c60e"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js?v=b3ba4146"></script>
+        <script src="_static/doctools.js?v=888ff710"></script>
+        <script src="_static/sphinx_highlight.js?v=4825356b"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="main module" href="main.html" />
+    <link rel="prev" title="GUI module" href="GUI.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            Sistemas de recomendación : Modelos basado en el contenido
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="modules.html">src</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="GUI.html">GUI module</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Recommender module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#Recommender.Recommender"><code class="docutils literal notranslate"><span class="pre">Recommender</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#Recommender.Recommender.calculate_cosine"><code class="docutils literal notranslate"><span class="pre">Recommender.calculate_cosine()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#Recommender.Recommender.calculate_df"><code class="docutils literal notranslate"><span class="pre">Recommender.calculate_df()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#Recommender.Recommender.calculate_idf"><code class="docutils literal notranslate"><span class="pre">Recommender.calculate_idf()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#Recommender.Recommender.calculate_length_vector"><code class="docutils literal notranslate"><span class="pre">Recommender.calculate_length_vector()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#Recommender.Recommender.calculate_similarity"><code class="docutils literal notranslate"><span class="pre">Recommender.calculate_similarity()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#Recommender.Recommender.calculate_tf"><code class="docutils literal notranslate"><span class="pre">Recommender.calculate_tf()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#Recommender.Recommender.calculate_tf_idf"><code class="docutils literal notranslate"><span class="pre">Recommender.calculate_tf_idf()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#Recommender.Recommender.load_data"><code class="docutils literal notranslate"><span class="pre">Recommender.load_data()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="main.html">main module</a></li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">Sistemas de recomendación : Modelos basado en el contenido</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="modules.html">src</a></li>
+      <li class="breadcrumb-item active">Recommender module</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/Recommender.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="module-Recommender">
+<span id="recommender-module"></span><h1>Recommender module<a class="headerlink" href="#module-Recommender" title="Permalink to this heading"></a></h1>
+<dl class="py class">
+<dt class="sig sig-object py" id="Recommender.Recommender">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">Recommender.</span></span><span class="sig-name descname"><span class="pre">Recommender</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">documents_filename</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stop_words_filename</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">corpus_filename</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/Recommender.html#Recommender"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#Recommender.Recommender" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="Recommender.Recommender.calculate_cosine">
+<span class="sig-name descname"><span class="pre">calculate_cosine</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dict1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dict2</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/Recommender.html#Recommender.calculate_cosine"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#Recommender.Recommender.calculate_cosine" title="Permalink to this definition"></a></dt>
+<dd><p>Function that calculates the cosine of two vectors (documents).
+Args:</p>
+<blockquote>
+<div><p>self: argument that refers to the created instance of the class.
+dict1: list of the values of the normalized vector of the first document.
+dict2: list of the values of the normalized vector of the second document.</p>
+</div></blockquote>
+<dl class="simple">
+<dt>Returns:</dt><dd><p>Value of the cosine of the two vectors.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="Recommender.Recommender.calculate_df">
+<span class="sig-name descname"><span class="pre">calculate_df</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/Recommender.html#Recommender.calculate_df"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#Recommender.Recommender.calculate_df" title="Permalink to this definition"></a></dt>
+<dd><p>Function that calculates the document frequency of the words in the documents.
+Args:</p>
+<blockquote>
+<div><p>self: argument that refers to the created instance of the class.</p>
+</div></blockquote>
+<dl class="simple">
+<dt>Returns:</dt><dd><p>Returns a dictionary with the document frequency of the words in the documents.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="Recommender.Recommender.calculate_idf">
+<span class="sig-name descname"><span class="pre">calculate_idf</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/Recommender.html#Recommender.calculate_idf"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#Recommender.Recommender.calculate_idf" title="Permalink to this definition"></a></dt>
+<dd><p>Function that calculates the inverse document frequency of the words in the documents.
+Args:</p>
+<blockquote>
+<div><p>self: argument that refers to the created instance of the class.</p>
+</div></blockquote>
+<dl class="simple">
+<dt>Returns:</dt><dd><p>Dictionary with the inverse document frequency of the words in the documents.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="Recommender.Recommender.calculate_length_vector">
+<span class="sig-name descname"><span class="pre">calculate_length_vector</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/Recommender.html#Recommender.calculate_length_vector"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#Recommender.Recommender.calculate_length_vector" title="Permalink to this definition"></a></dt>
+<dd><p>Function that calculates the length of the vectors of the documents.
+Args:</p>
+<blockquote>
+<div><p>self: argument that refers to the created instance of the class.</p>
+</div></blockquote>
+<dl class="simple">
+<dt>Returns:</dt><dd><p>List with the length of the vectors of the documents.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="Recommender.Recommender.calculate_similarity">
+<span class="sig-name descname"><span class="pre">calculate_similarity</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">document</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/Recommender.html#Recommender.calculate_similarity"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#Recommender.Recommender.calculate_similarity" title="Permalink to this definition"></a></dt>
+<dd><p>Function that calculates the similarity of a document with the rest of the documents.
+Args:</p>
+<blockquote>
+<div><p>self: argument that refers to the created instance of the class.
+document: number of the document to calculate the similarity with the rest of the documents.</p>
+</div></blockquote>
+<dl class="simple">
+<dt>Returns:</dt><dd><p>List with the similarity of the document with the rest of the documents.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="Recommender.Recommender.calculate_tf">
+<span class="sig-name descname"><span class="pre">calculate_tf</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/Recommender.html#Recommender.calculate_tf"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#Recommender.Recommender.calculate_tf" title="Permalink to this definition"></a></dt>
+<dd><p>Function that calculates the term frequency of the words in the documents.
+Args:</p>
+<blockquote>
+<div><p>self: argument that refers to the created instance of the class.</p>
+</div></blockquote>
+<dl class="simple">
+<dt>Returns:</dt><dd><p>Dictionary with the term frequency of the words in the documents.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="Recommender.Recommender.calculate_tf_idf">
+<span class="sig-name descname"><span class="pre">calculate_tf_idf</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/Recommender.html#Recommender.calculate_tf_idf"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#Recommender.Recommender.calculate_tf_idf" title="Permalink to this definition"></a></dt>
+<dd><p>Function that calculates the tf_idf of the words in the documents.
+Args:</p>
+<blockquote>
+<div><p>self: argument that refers to the created instance of the class.</p>
+</div></blockquote>
+<dl class="simple">
+<dt>Returns:</dt><dd><p>Dictionary with the tf_idf of the words in the documents.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="Recommender.Recommender.load_data">
+<span class="sig-name descname"><span class="pre">load_data</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">documents_filename</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stop_words_filename</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">corpus_filename</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/Recommender.html#Recommender.load_data"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#Recommender.Recommender.load_data" title="Permalink to this definition"></a></dt>
+<dd><p>Function that loads the data from the files and creates the strcutures needed for the recommender.
+Args:</p>
+<blockquote>
+<div><p>documents_filename: name of the file that contains the documents.
+stop_words_filename: name of the file that contains the stop words.
+corpus_filename: name of the file that contains the corpus (for the lemmatization).</p>
+</div></blockquote>
+<dl class="simple">
+<dt>Returns:</dt><dd><p>Returns a list of dictionaries, where each dictionary contains the frequency of the words in a document.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="GUI.html" class="btn btn-neutral float-left" title="GUI module" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="main.html" class="btn btn-neutral float-right" title="main module" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2023, Daniel Felipe &amp; Facundo José.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
