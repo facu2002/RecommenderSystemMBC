@@ -19,11 +19,39 @@ class Recommender:
         Returns the created instance of the Recommender class.
     """
     self.frequencies = self.load_data(documents_filename, stop_words_filename, corpus_filename)
-    self.calculate_df()
-    self.calculate_tf()
-    self.calculate_idf()
-    self.calculate_length_vector()
-    self.calculate_tf_idf()
+    self.df = self.calculate_df()
+    self.tf = self.calculate_tf()
+    self.idf = self.calculate_idf()
+    self.length_vector = self.calculate_length_vector()
+    self.tf_idf = self.calculate_tf_idf()
+    
+  def __str__(self):
+    result = ""
+    result += "Frequencies:\n"
+    for i in self.frequencies:
+      result += str(i) + "\n"
+    result += "DF:\n"
+    for i in self.df:
+      result += str(i) + "\n"
+    result += "TF:\n"
+    for i in self.tf:
+      result += str(i) + "\n"
+    result += "IDF:\n"
+    for i in self.idf:
+      result += str(i) + "\n"
+    result += "Length Vector:\n"
+    for i in self.length_vector:
+      result += str(i) + "\n"
+    result += "TF-IDF:\n"
+    for i in self.tf_idf:
+      result += str(i) + "\n"
+    result += "Similarity:\n"
+    for i in range(len(self.tf_idf)):
+      result += str(self.calculate_similarity(i)) + "\n"
+    result += "\n REMEMBER: Use de GUI to see the data in a better way.\n"
+    return result
+  
+      
 
 
   def load_data(self, documents_filename, stop_words_filename, corpus_filename):
@@ -80,20 +108,20 @@ class Recommender:
     Returns:
         Returns a dictionary with the document frequency of the words in the documents.
     """
-    self.df = dict()
+    df = dict()
     for dictionary in self.frequencies:
       for element in dictionary:
-        if element in self.df:
-          self.df[element] += dictionary[element]
+        if element in df:
+          df[element] += dictionary[element]
         else:
-          self.df[element] = dictionary[element]
-    for word in self.df:
+          df[element] = dictionary[element]
+    for word in df:
       for i in range(len(self.frequencies)):
         if word in self.frequencies[i]:
           continue
         else:
           self.frequencies[i][word] = 0 
-    return self.df
+    return df
 
 
 
@@ -105,7 +133,7 @@ class Recommender:
     Returns:
         Dictionary with the term frequency of the words in the documents.
     """
-    self.tf = []
+    tf = []
     for dictionary in self.frequencies:
       aux = dict()
       for element in dictionary:
@@ -113,8 +141,8 @@ class Recommender:
           aux[element] = 0
         else:
           aux[element] = 1 + math.log10(dictionary[element])
-      self.tf.append(aux)
-    return self.tf
+      tf.append(aux)
+    return tf
 
 
 
@@ -126,10 +154,10 @@ class Recommender:
     Returns:
         Dictionary with the inverse document frequency of the words in the documents.
     """
-    self.idf = dict()
+    idf = dict()
     for element in self.df:
-      self.idf[element] = math.log10(len(self.frequencies)/self.df[element])
-    return self.idf
+      idf[element] = math.log10(len(self.frequencies)/self.df[element])
+    return idf
 
   
 
@@ -141,13 +169,13 @@ class Recommender:
     Returns:
         List with the length of the vectors of the documents.
     """
-    self.length_vector = []
+    length_vector = []
     for dictionary in self.tf:
       aux = 0
       for element in dictionary:
         aux += dictionary[element]**2
-      self.length_vector.append(math.sqrt(aux))
-    return self.length_vector
+      length_vector.append(math.sqrt(aux))
+    return length_vector
 
 
 
@@ -159,7 +187,7 @@ class Recommender:
     Returns:
         Dictionary with the tf_idf of the words in the documents.
     """
-    self.tf_idf = []
+    tf_idf = []
     i = 0
     for dictionary in self.tf:
       aux = dict()
@@ -168,9 +196,9 @@ class Recommender:
           aux[element] = dictionary[element] / self.length_vector[i]
         else:
           aux[element] = 0
-      self.tf_idf.append(aux)
+      tf_idf.append(aux)
       i += 1
-    return self.tf_idf
+    return tf_idf
 
 
 
