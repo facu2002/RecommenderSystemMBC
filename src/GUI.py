@@ -33,6 +33,7 @@ class GUI(QWidget):
     font = tab_widget.font()
     font.setPointSize(16)  # Establece el tamaño de la fuente de los títulos
     tab_widget.setFont(font)
+    size_articles = len(recommender.frequencies)
     
     # Crear la primera tabla y agregar datos de ejemplo
     for index, article in enumerate(recommender.frequencies):
@@ -49,7 +50,10 @@ class GUI(QWidget):
       # Establecer el diseño del widget contenedor
       widget_contenedor.setLayout(hbox)
       tab_widget.addTab(widget_contenedor, f"Document {index}")
-        
+      print(f"INFO GUI: Document information graphed {index} of {size_articles}")
+      print("\033[F\033[K", end="")
+    
+    print("INFO GUI: Please wait while the GUI is loaded...")
     # Diseño del diseño principal
     layout = QVBoxLayout(self)
     layout.addWidget(tab_widget)
@@ -151,7 +155,8 @@ class GUI(QWidget):
     Returns:
        The table with the data of the similarities.
     """
-    similarities = recommender.calculate_similarity(num_article)
+    size_articles = len(recommender.frequencies)
+    similarities = [ recommender.similarity[(num_article, x)] if (num_article, x) in recommender.similarity else recommender.similarity[(x, num_article)] for x in range(size_articles) if x != num_article ]
     table = QTableWidget(self)
     table.setColumnCount(2)
     table.setRowCount(len(similarities))

@@ -19,36 +19,57 @@ class Recommender:
         Returns the created instance of the Recommender class.
     """
     self.frequencies = self.load_data(documents_filename, stop_words_filename, corpus_filename)
+    print("The articles have been loaded correctly")
     self.df = self.calculate_df()
+    print("The df has been calculated correctly")
     self.tf = self.calculate_tf()
+    print("The tf has been calculated correctly")
     self.idf = self.calculate_idf()
+    print("The idf has been calculated correctly")
     self.length_vector = self.calculate_length_vector()
+    print("The length of the vector has been calculated correctly")
     self.tf_idf = self.calculate_tf_idf()
+    print("The tf-idf has been calculated correctly")
+    self.similarity = self.calculate_similarity()
+    print("Similarities have been calculated correctly")
+    
+    
+    
     
   def __str__(self):
     result = ""
     result += "\nFrequencies:\n"
+
     for index, i in enumerate(self.frequencies):
       result += "Document " + str(index) + "\n"
       result += str(i) + "\n\n"
     result += "\nDF:\n"
+
     for i in self.df:
       result += str(i) + " = " + str(self.df[i]) + "\n"
     result += "\nTF:\n"
-    for i in self.tf:
-      result += str(i) + "\n"
+
+    for index, i in enumerate(self.tf):
+      result += "Document " + str(index) + "\n"
+      result += str(i) + "\n\n"
     result += "\nIDF:\n"
+
     for i in self.idf:
       result += str(i) + " = " + str(self.idf[i]) + "\n"
     result += "\nLength Vector:\n"
+
     for i in self.length_vector:
       result += str(i) + "\n"
     result += "\nTF-IDF:\n"
-    for i in self.tf_idf:
-      result += str(i) + "\n"
+
+    for index, i in enumerate(self.tf_idf):
+      result += "Document " + str(index) + "\n"
+      result += str(i) + "\n\n"
     result += "\nSimilarity:\n"
-    for i in range(len(self.tf_idf)):
-      result += str(self.calculate_similarity(i)) + "\n"
+
+    for i in self.similarity:
+      result += str(i) + " -> " + str(self.similarity[i]) + "\n"
+
     result += "\n REMEMBER: Use de GUI to see the data in a better way.\n"
     return result
   
@@ -223,7 +244,7 @@ class Recommender:
 
 
 
-  def calculate_similarity(self, document):
+  def calculate_similarity(self):
     """
     Function that calculates the similarity of a document with the rest of the documents.
     Args:
@@ -232,9 +253,12 @@ class Recommender:
     Returns:
         List with the similarity of the document with the rest of the documents.
     """
-    result = []
-    for i in range(len(self.tf_idf)):
-      if(document != i):
-        result.append(self.calculate_cosine(self.tf_idf[document], self.tf_idf[i]))
+    result = dict()
+    for i in range(len(self.frequencies)):
+      for j in range(i+1, len(self.frequencies)):  
+        if (i, j) in result or (j, i) in result:
+          continue
+        else:
+          result[(i, j)] = self.calculate_cosine(self.tf_idf[i], self.tf_idf[j])
       
     return result 
