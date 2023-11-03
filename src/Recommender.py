@@ -27,25 +27,26 @@ class Recommender:
     
   def __str__(self):
     result = ""
-    result += "Frequencies:\n"
-    for i in self.frequencies:
-      result += str(i) + "\n"
-    result += "DF:\n"
+    result += "\nFrequencies:\n"
+    for index, i in enumerate(self.frequencies):
+      result += "Document " + str(index) + "\n"
+      result += str(i) + "\n\n"
+    result += "\nDF:\n"
     for i in self.df:
-      result += str(i) + "\n"
-    result += "TF:\n"
+      result += str(i) + " = " + str(self.df[i]) + "\n"
+    result += "\nTF:\n"
     for i in self.tf:
       result += str(i) + "\n"
-    result += "IDF:\n"
+    result += "\nIDF:\n"
     for i in self.idf:
-      result += str(i) + "\n"
-    result += "Length Vector:\n"
+      result += str(i) + " = " + str(self.idf[i]) + "\n"
+    result += "\nLength Vector:\n"
     for i in self.length_vector:
       result += str(i) + "\n"
-    result += "TF-IDF:\n"
+    result += "\nTF-IDF:\n"
     for i in self.tf_idf:
       result += str(i) + "\n"
-    result += "Similarity:\n"
+    result += "\nSimilarity:\n"
     for i in range(len(self.tf_idf)):
       result += str(self.calculate_similarity(i)) + "\n"
     result += "\n REMEMBER: Use de GUI to see the data in a better way.\n"
@@ -76,8 +77,9 @@ class Recommender:
     with open(corpus_filename, "r") as corpus_file_system:
       corpus_list = json.load(corpus_file_system)
     
-    with open(documents_filename, "r") as document_file_system:
-      for line in document_file_system.readlines():
+    with open(documents_filename, "r", encoding='utf-8') as document_file_system:
+      line = document_file_system.readline()
+      while line:
         # Elimina los signos de puntuación
         line = re.sub(r'[^\w\s\']', '', line)
         # Pasa todo a minúsculas
@@ -96,6 +98,7 @@ class Recommender:
           else:
             document[element] = 1
         list_term_count.append(document)
+        line = document_file_system.readline()
     return list_term_count
 
 
@@ -115,12 +118,12 @@ class Recommender:
           df[element] += dictionary[element]
         else:
           df[element] = dictionary[element]
-    for word in df:
-      for i in range(len(self.frequencies)):
-        if word in self.frequencies[i]:
-          continue
-        else:
-          self.frequencies[i][word] = 0 
+    # for word in df:
+    #   for i in range(len(self.frequencies)):
+    #     if word in self.frequencies[i]:
+    #       continue
+    #     else:
+    #       self.frequencies[i][word] = 0 
     return df
 
 
@@ -213,11 +216,10 @@ class Recommender:
         Value of the cosine of the two vectors.
     """  
     result = 0
-    if len(dict1) == len(dict2):
-      for i in dict1:
-        result += dict1[i] * dict2[i]
-      return result
-    return -1
+    terms = list(set(dict1) & set(dict2))
+    for i in terms:
+      result += dict1[i] * dict2[i]
+    return result
 
 
 
