@@ -136,15 +136,9 @@ class Recommender:
     for dictionary in self.frequencies:
       for element in dictionary:
         if element in df:
-          df[element] += dictionary[element]
+          df[element] += 1   
         else:
-          df[element] = dictionary[element]
-    # for word in df:
-    #   for i in range(len(self.frequencies)):
-    #     if word in self.frequencies[i]:
-    #       continue
-    #     else:
-    #       self.frequencies[i][word] = 0 
+          df[element] = 1
     return df
 
 
